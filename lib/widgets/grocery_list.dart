@@ -27,28 +27,36 @@ class _GroceryListState extends State<GroceryList> {
         'flutter-prep-a9ef3-default-rtdb.firebaseio.com', 'shopping-list.json');
 
     final response = await http.get(url);
-    print(response.body);
+    // print(response.body);
+    // print(response.statusCode);
     final Map<String, dynamic> listData =
         json.decode(response.body);
-    final List<GroceryItem> _loadedItemList = [];
+    final List<GroceryItem> loadedItemList = [];
     for (final item in listData.entries) {
       final category = categories.entries.firstWhere((catItem) => catItem.value.title == item.value["category"]).value;
-      _loadedItemList.add(GroceryItem(
+      loadedItemList.add(GroceryItem(
           id: item.key,
           name: item.value['name'],
           quantity: item.value['quantity'],
           category: category));
     }
     setState(() {
-      _groceryItems = _loadedItemList;
+      _groceryItems = loadedItemList;
     });
   }
 
   void _addItem() async {
-    //final newItem =
-    await Navigator.of(context).push<GroceryItem>(
-        MaterialPageRoute(builder: ((context) => const NewItem())));
-    _loadItems();
+    final newItem = await Navigator.of(context).push<GroceryItem>(
+        MaterialPageRoute(builder: ((context) => const NewItem()))
+      );
+    if(newItem == null){
+      return;
+    }
+    setState(() {
+      _groceryItems.add(newItem);
+    });
+
+    //_loadItems();
 
     // if (newItem == null) {
     //   return;
