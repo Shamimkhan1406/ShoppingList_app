@@ -27,12 +27,15 @@ class _GroceryListState extends State<GroceryList> {
   void _loadItems() async {
     final url = Uri.https(
         'flutter-prep-a9ef3-default-rtdb.firebaseio.com', 'shopping-list.json');
+    
+    try{
+      final response = await http.get(url);
 
-    final response = await http.get(url);
-    if (response.statusCode >= 400) {
-      setState(() {
-        _error = 'faild to fetch data please try again later.';
+      if (response.statusCode >= 400) {
+        setState(() {
+        _error = 'faild to fetch data';
       });
+      
     }
     if(response.body == "null"){
       setState(() {
@@ -59,6 +62,15 @@ class _GroceryListState extends State<GroceryList> {
       _groceryItems = loadedItemList;
       isLoading = false;
     });
+
+    }catch (error) {
+      setState(() {
+        _error = 'something went wrogn!...';
+      });
+    }
+
+    
+    
   }
 
   void _addItem() async {
